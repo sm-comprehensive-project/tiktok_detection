@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel
 from flask import Flask, request, jsonify
 
-# --- 모델 로드 및 설정 부분 (기존 코드와 동일) ---
+# --- 모델 로드 및 설정 부분 ---
 fine_tuned_model_path = "checkpoint-2030"
 base_model_name = "EleutherAI/polyglot-ko-3.8b"
 
@@ -52,19 +52,19 @@ print(f"Model loaded successfully on {device}!")
 # --- Flask 애플리케이션 시작 ---
 app = Flask(__name__)
 
-# --- 텍스트 생성 함수 (후처리 로직 수정) ---
+# --- 텍스트 생성 함수  ---
 def generate_response(prompt_text, max_new_tokens=100):
     # input_ids와 attention_mask를 함께 생성
     encoded_input = tokenizer(prompt_text, return_tensors="pt", padding=True, truncation=True).to(device)
     input_ids = encoded_input.input_ids
-    attention_mask = encoded_input.attention_mask # <-- 이 줄 추가
+    attention_mask = encoded_input.attention_mask 
 
     # 모델 생성 시작 인덱스 (입력 프롬프트 길이)
     input_len = input_ids.shape[1]
 
     generated_ids = model.generate(
         input_ids,
-        attention_mask=attention_mask, # <-- 이 줄 추가
+        attention_mask=attention_mask,
         max_new_tokens=max_new_tokens,
         pad_token_id=tokenizer.pad_token_id,
         eos_token_id=tokenizer.eos_token_id,
@@ -89,7 +89,7 @@ def generate_response(prompt_text, max_new_tokens=100):
 
     return final_response
 
-# --- API 엔드포인트 정의 (기존 코드와 동일) ---
+# --- API 엔드포인트 정의  ---
 @app.route('/generate', methods=['POST'])
 def handle_generate_request():
     data = request.json
@@ -108,6 +108,6 @@ def handle_generate_request():
         print(f"Error during text generation: {e}")
         return jsonify({"error": str(e)}), 500
 
-# --- 서버 실행 부분 (기존 코드와 동일) ---
+# --- 서버 실행 부분  ---
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=False)
