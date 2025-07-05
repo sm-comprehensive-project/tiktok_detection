@@ -165,7 +165,3 @@ def predict_with_clip(clip_model, image_paths, text_input, categories, device):
             return categories[predicted_label_idx]
         except Exception as e:
             return f"clip_inference_error: {str(e)}"
-
-# --- 전역 변수로 CLIP 모델 로드 (서버 시작 시 한 번만) ---
-# 이 부분은 실제 Flask 앱 시작 전에 실행되어야 합니다.
-# 예시: main Flask 앱 스크립트에서 초기화
